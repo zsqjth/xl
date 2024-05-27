@@ -7,7 +7,7 @@ import (
 
 func main() {
 	http.HandleFunc("/upload", controller.UploadHandler)
-	http.HandleFunc("/login", controller.LogoutHandler)
+	http.HandleFunc("/login", controller.LoginHandler)
 	http.HandleFunc("/register", controller.RegisterHandler)
 	http.HandleFunc("/product/insert", controller.InsertHandler)
 	http.HandleFunc("/product/update", controller.UpdateHandler)

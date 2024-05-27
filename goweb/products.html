@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品管理</title>
+    <!-- 引入Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- 自定义样式 -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>商品管理</h2>
+
+        <!-- 搜索栏 -->
+        <form class="form-inline my-3">
+            <input class="form-control mr-sm-2" type="search" placeholder="按名称搜索商品" aria-label="Search" id="searchBox">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="searchButton">搜索</button>
+        </form>
+
+        <!-- 添加商品按钮 -->
+        <button type="button" class="btn btn-primary" id="addButton">
+            添加商品
+        </button>
+
+        <!-- 商品列表容器 -->
+        <div id="productList">
+            <!-- 商品将通过 AJAX 请求动态加载 -->
+        </div>
+    </div>
+
+    <!-- 添加商品的模态窗口 -->
+    <div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addProductModalLabel">添加商品</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form id="addProductForm">
+              <div class="form-group">
+                <label for="productName">商品名称</label>
+                <input type="text" class="form-control" id="productName" required>
+              </div>
+              <div class="form-group">
+                <label for="productImg">商品图片</label>
+                <input type="text" class="form-control" id="productImg" required readonly>
+              </div>
+              <div class="form-group">
+                <label for="productPrice">商品价格</label>
+                <input type="number" class="form-control" id="productPrice" step="0.01" required>
+              </div>
+              <!-- 更多商品信息字段可以在这里添加 -->
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+            <button type="submit" class="btn btn-primary" form="addProductForm">添加</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 文件上传模态框 -->
+    <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="uploadModalLabel">上传图片</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <input type="file" id="uploadFile" />
+            <div id="uploadMsg"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 引入jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>    
+    <!-- 引入Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>    
+    <!-- 商品页面JavaScript逻辑 -->
+    <script src="js/products.js"></script>
+</body>
+</html>

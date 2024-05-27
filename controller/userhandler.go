@@ -10,7 +10,14 @@ import (
 	"xl/utils"
 )
 
-func LogoutHandler(w http.ResponseWriter, r *http.Request) {
+func LoginHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
 	var user pojo.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	fmt.Println(user)
@@ -25,6 +32,12 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if st {
+		cookie := &http.Cookie{
+			Name:  "user_auth",
+			Value: fmt.Sprintf("%s:%s", user.UserName, user.PassWord),
+			Path:  "/",
+		}
+		http.SetCookie(w, cookie)
 		utils.RespondWithJSON(w, 0, "success", "登录成功")
 		return
 	} else {
@@ -33,8 +46,16 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
 	var user pojo.User
 	err := json.NewDecoder(r.Body).Decode(&user)
+	fmt.Println(user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

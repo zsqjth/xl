@@ -10,6 +10,14 @@ import (
 )
 
 func InsertHandler(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
 	var product pojo.Product
 	json.NewDecoder(r.Body).Decode(&product)
 	fmt.Println(product)
@@ -25,6 +33,13 @@ func InsertHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 func ShowAllHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
 	var products []pojo.Product
 	products, err := service.ShowAll()
 	if err != nil {
@@ -38,9 +53,18 @@ func ShowAllHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 func ShowHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
 	var product pojo.Product
 	name := r.URL.Query().Get("name")
+	fmt.Println(name)
 	product, err := service.Find(name)
+	fmt.Println(product)
 	if err != nil {
 		return
 	}
@@ -52,6 +76,13 @@ func ShowHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 func UpdateHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
 	var product pojo.Product
 	json.NewDecoder(r.Body).Decode(&product)
 	st, err := service.Update(product.ProductName, product.Img, product.Price)
@@ -66,8 +97,16 @@ func UpdateHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func DestoryHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
 	var product pojo.Product
 	json.NewDecoder(r.Body).Decode(&product)
+	fmt.Println(product)
 	st, err := service.Destory(product.ProductName)
 	if err != nil {
 		fmt.Println("有错误")

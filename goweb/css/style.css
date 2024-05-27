@@ -1,0 +1,41 @@
+/* 自定义样式表 */
+
+body {
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .container {
+    margin-top: 30px;
+  }
+  
+  h2 {
+    color: #333;
+  }
+  
+  /* 表单样式 */
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  /* 商品列表样式 */
+  .table {
+    margin-top: 20px;
+  }
+  
+  /* 按钮样式 */
+  .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+  
+  .btn-primary:hover {
+    background-color: #0069d9;
+    border-color: #0069d9;
+  }
+  
+  /* 自定义消息提示框样式 */
+  .alert-custom {
+    color: #fff;
+    background-color: #6c757d;
+    border-color: #6c757d;
+  }
