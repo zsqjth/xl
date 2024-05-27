@@ -25,10 +25,10 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if st {
-		utils.RespondWithJSON(w, "登录成功")
+		utils.RespondWithJSON(w, 0, "success", "登录成功")
 		return
 	} else {
-		utils.RespondWithJSON(w, "登录失败")
+		utils.RespondWithJSON(w, 1, "false", "登录失败")
 	}
 }
 
@@ -44,6 +44,6 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	utils.RespondWithJSON(w, "注册成功")
+	utils.RespondWithJSON(w, 0, "success", "注册成功")
 
 }
