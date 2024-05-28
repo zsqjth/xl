@@ -1,35 +1,78 @@
 $(document).ready(function() {
-    // 初始化商品列表显示
+    // 初始化商品列表
     loadProducts();
 
-    // 绑定搜索按钮的点击事件
+    // 搜索商品
     $('#searchButton').on('click', function(e) {
         e.preventDefault();
         var searchQuery = $('#searchBox').val();
         searchProducts(searchQuery);
     });
 
-    // 绑定添加按钮的点击事件
+    // 搜索商品的函数
+    function searchProducts(query) {
+        $.ajax({
+            url: 'http://localhost:8080/product/show?name=' + encodeURIComponent(query),
+            type: 'GET',
+            success: function(response) {
+                // 检查 response.code 和 response.data 是否有效
+                if(response.code === 0 && response.data) {
+                    // 搜索返回单个 product 结构体，而不是数组
+                    var product = response.data;
+                    // 检查 product 是否包含必要的属性
+                    if(product && product.name && product.img && product.price) {
+                        // 将单个 product 放入数组中传递给 updateProductList
+                        updateProductList([product]);
+                    } else {
+                        $('#productList').html('<p>搜索结果无效。</p>');
+                    }
+                } else {
+                    $('#productList').html('<p>没有找到商品。</p>');
+                }
+            },
+            error: function(xhr) {
+                $('#productList').html('<p>搜索商品时发生错误。</p>');
+            }
+        });
+    }
+
+    // 添加商品的模态窗口逻辑
     $('#addButton').on('click', function() {
+        $('#addProductModal').modal('show');
+    });
+
+     // 打开文件上传模态框的事件绑定
+     $('#uploadButton').on('click', function() {
         $('#uploadModal').modal('show');
     });
 
-    // 处理文件上传
-    $('#uploadFile').on('change', function() {
-        var formData = new FormData();
-        formData.append('file', $('#uploadFile')[0].files[0]);
-
+    // 文件上传表单提交事件
+    $('#uploadForm').on('submit', function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
         $.ajax({
-            url: 'http://localhost:8080/upload', // 您的文件上传API端点
+            url: 'http://localhost:8080/upload',
             type: 'POST',
             data: formData,
             contentType: false,
             processData: false,
+            xhr: function() {
+                var xhr = $.ajaxSettings.xhr();
+                if (xhr.upload) {
+                    xhr.upload.addEventListener('progress', function(event) {
+                        if (event.lengthComputable) {
+                            var percentComplete = (event.loaded / event.total) * 100;
+                            $('#uploadMsg').text('上传进度: ' + percentComplete.toFixed(2) + '%');
+                        }
+                    }, false);
+                }
+                return xhr;
+            },
             success: function(response) {
                 if(response.code === 0 && response.data && response.data.filename) {
                     $('#uploadMsg').text('文件上传成功: ' + response.data.filename);
-                    $('#productImg').val(response.data.filename); // 设置商品图片字段的值
-                    $('#addProductModal').modal('show'); // 显示添加商品模态框
+                    $('#productImg').val(response.data.filename);
+                    $('#addProductModal').modal('show');
                 } else {
                     $('#uploadMsg').text('文件上传失败: ' + (response.msg || ''));
                 }
@@ -40,7 +83,7 @@ $(document).ready(function() {
         });
     });
 
-    // 处理添加商品表单的提交事件
+    // 添加商品表单提交事件
     $('#addProductForm').on('submit', function(e) {
         e.preventDefault();
         var productData = {
@@ -49,16 +92,15 @@ $(document).ready(function() {
             price: $('#productPrice').val()
         };
         $.ajax({
-            url: 'http://localhost:8080/product/insert', // 您的添加商品API端点
+            url: 'http://localhost:8080/product/insert',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(productData),
             success: function(response) {
                 if(response.code === 0) {
-                    $('#addProductModal').modal('hide');
-                    loadProducts(); // 刷新商品列表
+                    loadProducts();
                 } else {
-                    alert('添加商品失败：' + (response.msg || ''));
+                    alert('添加商品失败：' + response.msg);
                 }
             },
             error: function(xhr) {
@@ -67,12 +109,12 @@ $(document).ready(function() {
         });
     });
 
-    // 绑定删除商品按钮的点击事件
+    // 删除商品的逻辑
     $('#productList').on('click', '.delete-product', function() {
         var productName = $(this).data('product-name');
         if (confirm('确定要删除该商品吗？')) {
             $.ajax({
-                url: 'http://localhost:8080/product/destory', // 您的删除商品API端点
+                url: 'http://localhost:8080/product/destory',
                 type: 'DELETE',
                 contentType: 'application/json',
                 data: JSON.stringify({ name: productName }),
@@ -80,7 +122,7 @@ $(document).ready(function() {
                     if(response.code === 0) {
                         loadProducts(); // 刷新商品列表
                     } else {
-                        alert('删除商品失败：' + (response.msg || ''));
+                        alert('删除商品失败：' + response.msg);
                     }
                 },
                 error: function(xhr) {
@@ -90,55 +132,41 @@ $(document).ready(function() {
         }
     });
 
-    // 加载商品列表的函数
+    // 加载商品列表
     function loadProducts() {
         $.ajax({
-            url: 'http://localhost:8080/product/showall', // 获取商品列表的API端点
+            url: 'http://localhost:8080/product/showall',
             type: 'GET',
             success: function(response) {
                 if(response.code === 0 && Array.isArray(response.data)) {
-                    var products = response.data;
-                    var listHtml = products.map(function(product) {
-                        return (
-                            '<div class="card mb-3" style="width: 18rem;">' +
-                            '<img src="' + product.img + '" class="card-img-top" alt="商品图片">' +
-                            '<div class="card-body">' +
-                            '<h5 class="card-title">' + product.name + '</h5>' +
-                            '<p class="card-text">价格: ' + product.price + '</p>' +
-                            '<button class="btn btn-danger delete-product" data-product-name="' + product.name + 
-                            '">删除</button>' +
-                            '</div>' +
-                            '</div>'
-                        );
-                    }).join('');
-                    $('#productList').html(listHtml);
+                    updateProductList(response.data);
                 } else {
-                    $('#productList').html('<p>没有商品信息。</p>');
+                    $('#productList').html('<p>无法加载商品列表。</p>');
                 }
             },
             error: function(xhr) {
-                $('#productList').html('<p>无法加载商品列表。</p>');
+                $('#productList').html('<p>加载商品列表时发生错误。</p>');
             }
         });
     }
 
-    // 搜索商品的函数
-    function searchProducts(searchQuery) {
-        // 这里应实现搜索逻辑，并通过AJAX请求后端API
-        // 以下为示例代码，应根据实际情况进行调整
-        var product = { name: searchQuery, img: 'path/to/default/image.jpg', price: 0 };
-        displayProduct(product);
-    }
-
-    // 显示单个商品信息的函数
-    function displayProduct(product) {
-        var listHtml = '<div class="card mb-3" style="width: 18rem;">' +
-                       '<img src="' + product.img + '" class="card-img-top" alt="商品图片">' +
-                       '<div class="card-body">' +
-                       '<h5 class="card-title">' + product.name + '</h5>' +
-                       '<p class="card-text">价格: ' + product.price + '</p>' +
-                       '</div>' +
-                       '</div>';
+    // 更新商品列表的辅助函数
+    function updateProductList(products) {
+        var listHtml = '';
+        if (products.length === 0) {
+            listHtml += '<p>没有商品信息。</p>';
+        } else {
+            products.forEach(function(product) {
+                listHtml += '<div class="card mb-3" style="width: 18rem;">';
+                listHtml += '<img src="' + product.img + '" class="card-img-top" alt="商品图片">';
+                listHtml += '<div class="card-body">';
+                listHtml += '<h5 class="card-title">' + product.name + '</h5>';
+                listHtml += '<p class="card-text">价格: ' + product.price + '</p>';
+                listHtml += '<button class="btn btn-danger delete-product" data-product-name="' + product.name + '">删除</button>';
+                listHtml += '</div>';
+                listHtml += '</div>';
+            });
+        }
         $('#productList').html(listHtml);
     }
 });

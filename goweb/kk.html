@@ -49,6 +49,7 @@
               <div class="form-group">
                 <label for="productImg">商品图片</label>
                 <input type="text" class="form-control" id="productImg" required readonly>
+                <button type="button" class="btn btn-secondary mt-2" id="uploadButton">上传图片</button>
               </div>
               <div class="form-group">
                 <label for="productPrice">商品价格</label>
@@ -65,7 +66,6 @@
       </div>
     </div>
 
-    <!-- 文件上传模态框 -->
     <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -76,15 +76,21 @@
             </button>
           </div>
           <div class="modal-body">
-            <input type="file" id="uploadFile" />
-            <div id="uploadMsg"></div>
+            <form id="uploadForm" enctype="multipart/form-data">
+              <div class="form-group">
+                <input type="file" class="form-control" id="uploadFile" name="file" />
+              </div>
+              <div id="uploadMsg"></div>
+            </form>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            <button type="button" class="btn btn-primary" id="uploadButton">上传</button>
           </div>
         </div>
       </div>
     </div>
+    
 
     <!-- 引入jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>    
